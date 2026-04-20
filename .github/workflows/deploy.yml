@@ -13,7 +13,7 @@ jobs:
 
       - run: docker build -t xxhjshamxx/multi-client ./microservices/client
       - run: docker build -t xxhjshamxx/multi-nginx ./microservices/nginx
-      - run: docker build -t xxhjshamxx/multi-nginx ./microservices/server
+      - run: docker build -t xxhjshamxx/multi-server ./microservices/server
       - run: docker build -t xxhjshamxx/multi-worker ./microservices/worker
       
       - run: docker push xxhjshamxx/multi-client
