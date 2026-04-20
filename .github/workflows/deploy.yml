@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-# I have added the secrets on github repo
+
       - run: docker build xxhjshamxx/multi-client ./microservices/client
       - run: docker build xxhjshamxx/multi-nginx ./microservices/nginx
       - run: docker build xxhjshamxx/multi-nginx ./microservices/server
