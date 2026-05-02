@@ -19,7 +19,7 @@ spec:
         image: prom/prometheus:latest
         ports:
         - containerPort: 9090
-        # Added by Ramzy for project monitoring requirement. Needs a configmap later.
+        # Added by Ibrahim-Alaa for project monitoring requirement. Needs a configmap later.
 ---
 apiVersion: v1
 kind: Service

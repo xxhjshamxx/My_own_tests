@@ -19,7 +19,7 @@ spec:
         image: grafana/grafana:latest
         ports:
         - containerPort: 3000
-        # Added by Ramzy for project monitoring requirement. default admin/admin login.
+        # Added by Ibrahim-Alaa for project monitoring requirement. default admin/admin login.
 ---
 apiVersion: v1
 kind: Service
