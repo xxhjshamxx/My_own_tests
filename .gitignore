@@ -1,1 +1,10 @@
-node_modules
+node_modules/
+.env
+dist/
+build/
+.DS_Store
+*.log
+.vscode/
+.trae/
+seed-product.js
+products/src/seed.ts

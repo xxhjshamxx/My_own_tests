@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import Router from 'next/router';
 import axios from 'axios';
-import ReCAPTCHA from "react-google-recaptcha";
 
 const SigninForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({email:null, password:null});
-  const [token, setToken] = useState(null);
 
   const onSubmit = async (event) => {
     event.preventDefault();
@@ -28,10 +26,6 @@ const SigninForm = () => {
       setErrors(errors);
     }
   };
-
-  const onCaptchaConfirm = (token) => {
-    setToken(token);
-  }
 
   const style={
     position: 'absolute',
@@ -55,10 +49,6 @@ const SigninForm = () => {
           {errors.password}
         </div>
         {errors.other}
-        <ReCAPTCHA
-          sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
-          onChange={onCaptchaConfirm}
-        />
         <button className="btn btn-primary">Login</button>
       </form>
     </div>

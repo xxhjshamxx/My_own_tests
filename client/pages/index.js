@@ -1,29 +1,35 @@
-import buildClient from '../api/build-client';
-import { useState, useEffect } from 'react';
-import Product from '../components/Product';
-
-const Index = ({currentUser, products}) => {
-  const style={
-    leftMargin: 'auto',
-    rightMargin: 'auto',
-    marginTop: '3em'
-  } 
+const Index = () => {
   return (
-    <div className="container" >
-      <div className="row row-cols-1 row-cols-xs-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-4" style={style}>
-        {products && products.map(item => {
-          return (
-            <div class="col"> <Product product={item} key={item.id}></Product> </div>
-          );
-        })}
+    <div className="container mt-5">
+      <h1 className="text-center">Product List (Hardcoded)</h1>
+      <div className="row mt-4">
+        <div className="col-md-4">
+          <div className="card">
+            <div className="card-body">
+              <h5 className="card-title">Test Product #1</h5>
+              <p className="card-text">Price: $29.99</p>
+            </div>
+          </div>
+        </div>
+        <div className="col-md-4">
+          <div className="card">
+            <div className="card-body">
+              <h5 className="card-title">Test Product #2</h5>
+              <p className="card-text">Price: $49.99</p>
+            </div>
+          </div>
+        </div>
+        <div className="col-md-4">
+          <div className="card">
+            <div className="card-body">
+              <h5 className="card-title">Test Product #3</h5>
+              <p className="card-text">Price: $19.99</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
 };
 
-Index.getInitialProps = async (context, client, currentUser) => {
-  const { data } = await client.get('/api/products');
-  return {products: data};
-};
-
-export default Index; 
+export default Index;

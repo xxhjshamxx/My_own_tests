@@ -1,34 +1,16 @@
 import 'bootstrap/dist/css/bootstrap.css';
-import buildClient from '../api/build-client';
 import SiteNavbar from '../components/SiteNavbar';
-import axios from 'axios';
+import ErrorBoundary from '../components/ErrorBoundary';
 
-axios.defaults.withCredentials = true;
-
-const AppComponent = ({ Component, pageProps, currentUser }) => {
+const AppComponent = ({ Component, pageProps }) => {
   return (
     <div>
-      <SiteNavbar currentUser={currentUser}/>
-      <Component 
-        {...pageProps} currentUser={currentUser}
-      />
+      <SiteNavbar currentUser={null} />
+      <ErrorBoundary>
+        <Component {...pageProps} />
+      </ErrorBoundary>
     </div>
   );
-};
-
-AppComponent.getInitialProps = async (context) => {
-  let pageProps = {};
-  let currentUser = null;
-  const client = buildClient(context.ctx);
-  try {
-    const { data } = await client.get('/api/users/currentuser');
-    currentUser = data.currentUser;
-    if (context.Component.getInitialProps) {
-      pageProps = await context.Component.getInitialProps(context.ctx, client, data.currentUser);
-    }
-  }
-  catch {}
-  return {pageProps, currentUser};
 };
 
 export default AppComponent;

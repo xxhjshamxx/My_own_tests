@@ -64,6 +64,12 @@ services:
     depends_on:
       - auth-mongo
       - nats
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:3000/api/users/currentuser || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   products:
     image: xxhjshamxx/ecomprod_products:latest
@@ -76,6 +82,12 @@ services:
     depends_on:
       - products-mongo
       - nats
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:3000/api/products || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   orders:
     image: xxhjshamxx/ecomprod_orders:latest
@@ -88,6 +100,12 @@ services:
     depends_on:
       - orders-mongo
       - nats
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:3000/api/orders || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   payments:
     image: xxhjshamxx/ecomprod_payments:latest
@@ -114,9 +132,14 @@ services:
       - nats
 
   client:
-    image: xxhjshamxx/ecomprod_client:latest
+    build:
+      context: ./client
+      dockerfile: Dockerfile.dev
     environment:
       BASE_URL: http://nginx
+    volumes:
+      - ./client:/app
+      - /app/node_modules
     depends_on:
       - auth
       - products
