@@ -1,0 +1,146 @@
+version: '3.8'
+
+services:
+
+  # ================================
+  # Databases
+  # ================================
+  auth-mongo:
+    image: mongo:latest
+    volumes:
+      - auth-mongo-data:/data/db
+
+  orders-mongo:
+    image: mongo:latest
+    volumes:
+      - orders-mongo-data:/data/db
+
+  payments-mongo:
+    image: mongo:latest
+    volumes:
+      - payments-mongo-data:/data/db
+
+  products-mongo:
+    image: mongo:latest
+    volumes:
+      - products-mongo-data:/data/db
+
+  # ================================
+  # Redis
+  # ================================
+  redis:
+    image: redis:alpine
+
+  # ================================
+  # NATS Streaming
+  # ================================
+  nats:
+    image: nats-streaming:latest
+    command:
+      - '-p'
+      - '4222'
+      - '-m'
+      - '8222'
+      - '-cid'
+      - 'ticketing'
+      - '--hb_interval'
+      - '5s'
+      - '--hb_timeout'
+      - '5s'
+      - '--hb_fail_count'
+      - '2'
+
+  # ================================
+  # Services
+  # ================================
+  auth:
+    image: xxhjshamxx/ecomprod_auth:latest
+    environment:
+      JWT_KEY: anysecretkey
+      MONGO_URI: mongodb://auth-mongo:27017/auth
+      NATS_CLIENT_ID: auth
+      NATS_URL: nats://nats:4222
+      NATS_CLUSTER_ID: ticketing
+    depends_on:
+      - auth-mongo
+      - nats
+
+  products:
+    image: xxhjshamxx/ecomprod_products:latest
+    environment:
+      JWT_KEY: anysecretkey
+      MONGO_URI: mongodb://products-mongo:27017/products
+      NATS_CLIENT_ID: products
+      NATS_URL: nats://nats:4222
+      NATS_CLUSTER_ID: ticketing
+    depends_on:
+      - products-mongo
+      - nats
+
+  orders:
+    image: xxhjshamxx/ecomprod_orders:latest
+    environment:
+      JWT_KEY: anysecretkey
+      MONGO_URI: mongodb://orders-mongo:27017/orders
+      NATS_CLIENT_ID: orders
+      NATS_URL: nats://nats:4222
+      NATS_CLUSTER_ID: ticketing
+    depends_on:
+      - orders-mongo
+      - nats
+
+  payments:
+    image: xxhjshamxx/ecomprod_payments:latest
+    environment:
+      JWT_KEY: anysecretkey
+      MONGO_URI: mongodb://payments-mongo:27017/payments
+      NATS_CLIENT_ID: payments
+      NATS_URL: nats://nats:4222
+      NATS_CLUSTER_ID: ticketing
+      STRIPE_KEY: your_stripe_key
+    depends_on:
+      - payments-mongo
+      - nats
+
+  expiration:
+    image: xxhjshamxx/ecomprod_expiration:latest
+    environment:
+      NATS_CLIENT_ID: expiration
+      NATS_URL: nats://nats:4222
+      NATS_CLUSTER_ID: ticketing
+      REDIS_HOST: redis
+    depends_on:
+      - redis
+      - nats
+
+  client:
+    image: xxhjshamxx/ecomprod_client:latest
+    environment:
+      BASE_URL: http://nginx
+    depends_on:
+      - auth
+      - products
+      - orders
+      - payments
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - '8080:80'
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - auth
+      - products
+      - orders
+      - payments
+      - client
+
+# ================================
+# Volumes
+# ================================
+volumes:
+  auth-mongo-data:
+  orders-mongo-data:
+  payments-mongo-data:
+  products-mongo-data:

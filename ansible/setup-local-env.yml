@@ -1,0 +1,41 @@
+---
+- name: Setup local VM for the project
+  hosts: localhost # running it locally on the test VM
+  become: yes
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+      # Ramzy: apt-get update before we do anything stupid
+
+    - name: Install dependencies
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+        state: present
+
+    - name: Add Docker GPG key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker repo
+      apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
+        state: present
+
+    - name: Install Docker
+      apt:
+        name: docker-ce
+        state: present
+      # Ramzy: Finally got docker installed. took long enough.
+
+    - name: Install kubectl
+      get_url:
+        url: "https://dl.k8s.io/release/v1.27.0/bin/linux/amd64/kubectl"
+        dest: /usr/local/bin/kubectl
+        mode: '0755'
+      # hardcoded version for now, too tired to make it dynamic
